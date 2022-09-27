@@ -5,11 +5,15 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Data
 public class User {
 
-    private int id;
+    private Long id;
     @NotBlank
     private String email;
     @NotBlank
@@ -17,6 +21,7 @@ public class User {
     private String name;
     @NotNull
     private LocalDate birthday;
+    private Set<Long> friends = new HashSet<>();
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
@@ -24,6 +29,7 @@ public class User {
         this.name = name;
         this.birthday = birthday;
     }
+
 }
 
 
