@@ -19,17 +19,20 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
+
     public Film findFilmById(Long filmId) {
         if (filmId < 0) {
             throw new NoSuchUserException("Идентификатор должен быть положительнымю");
         }
         return filmStorage.findById(filmId);
     }
+
     public Film createFilm(Film film) {
         validateFieldsFilms(film);
         return filmStorage.createFilm(film);
@@ -42,15 +45,16 @@ public class FilmService {
         }
         return filmStorage.updateFilm(film);
     }
+
     public Collection<Film> getFilms() {
         return filmStorage.findAllFilms();
     }
 
     public List<Film> findPopularFilms(Integer count) {
-       if (count == null || count == 0) {
-           count = 10;
-       }
-            return filmStorage.findPopular(count);
+        if (count == null || count == 0) {
+            count = 10;
+        }
+        return filmStorage.findPopular(count);
     }
 
     public Film addLike(Long filmId, Long userId) {
@@ -60,7 +64,7 @@ public class FilmService {
         return filmStorage.addLike(filmId, userId);
     }
 
-    public Film removeLike( Long filmId, Long userId) {
+    public Film removeLike(Long filmId, Long userId) {
         if (filmId < 0 || userId < 0) {
             throw new NoSuchUserException("Идентификатор должен быть положительнымю");
         }

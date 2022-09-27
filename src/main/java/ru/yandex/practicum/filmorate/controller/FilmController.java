@@ -49,7 +49,7 @@ public class FilmController {
     @GetMapping("/popular")
     public List<Film> findPopularFilms(@RequestParam(required = false) Integer count) {
         log.info("запрос популярных фильмов, count=" + count);
-            return filmService.findPopularFilms(count);
+        return filmService.findPopularFilms(count);
     }
 
     @PutMapping("/{id}/like/{userId}")

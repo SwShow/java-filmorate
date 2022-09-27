@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class InMemoryFilmStorage implements FilmStorage{
+public class InMemoryFilmStorage implements FilmStorage {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Long id = 0L;
     protected final Map<Long, Film> filmRepository = new HashMap<>();
@@ -48,11 +48,11 @@ public class InMemoryFilmStorage implements FilmStorage{
         if (count < filmRepository.size()) {
             count1 = filmRepository.size();
         }
-        Collection<Film> films =  filmRepository.values();
-        return  films.stream()
+        Collection<Film> films = filmRepository.values();
+        return films.stream()
                 .sorted(Comparator.comparingInt(Film::getQuanLikes).reversed())
                 .limit(count1)
-                 .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
 
     }
@@ -60,10 +60,10 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public Film addLike(Long filmId, Long userId) {
-    Film film = filmRepository.get(filmId);
-    film.getLikes().add(userId);
-    log.info("лайк добавлен:" + film.getLikes());
-    filmRepository.replace(filmId, film);
+        Film film = filmRepository.get(filmId);
+        film.getLikes().add(userId);
+        log.info("лайк добавлен:" + film.getLikes());
+        filmRepository.replace(filmId, film);
         return film;
     }
 
@@ -73,7 +73,7 @@ public class InMemoryFilmStorage implements FilmStorage{
         film.getLikes().remove(userId);
         log.info("лайк удален:" + film.getLikes());
         filmRepository.replace(filmId, film);
-    return film;
+        return film;
     }
 
 

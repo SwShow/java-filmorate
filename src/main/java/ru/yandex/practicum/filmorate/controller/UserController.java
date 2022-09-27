@@ -17,7 +17,8 @@ import java.util.*;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-   private final UserService userService;
+    private final UserService userService;
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -40,26 +41,31 @@ public class UserController {
         log.info("получен запрос на получение данных пользователей");
         return userService.getAllUsers();
     }
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         log.info("получен запрос на получение данных пользователя");
         return userService.getUserById(id);
     }
+
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
-     log.info("Запрос на добавление в друзья");
-    userService.addFriends(id, friendId);
+        log.info("Запрос на добавление в друзья");
+        userService.addFriends(id, friendId);
     }
+
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
         log.info("Запрос на удаление из друзей");
         userService.deleteFriends(id, friendId);
     }
+
     @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable Long id) {
         log.info("Получен запрос списка друзей пользователя");
         return userService.getFriends(id);
     }
+
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
         log.info("Получен запрос списка общих друзей пользователя 1 и пользователя 2");

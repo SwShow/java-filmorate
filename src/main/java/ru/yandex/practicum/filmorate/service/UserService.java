@@ -47,18 +47,21 @@ public class UserService {
         }
         userStorage.addFriend(id, friendId);
     }
+
     public void deleteFriends(Long id, Long friendId) {
         if (id < 0 || friendId < 0) {
             throw new NoSuchUserException("Идентификатор должен быть положительнымю");
         }
         userStorage.removeFriend(id, friendId);
     }
+
     public List<User> getFriends(Long id) {
         if (id < 0) {
             throw new NoSuchUserException("Идентификатор должен быть положительнымю");
         }
         return userStorage.findUserFriends(id);
     }
+
     public List<User> getCommonFrs(Long id, Long otherId) {
         if (id < 0 || otherId < 0) {
             throw new NoSuchUserException("Идентификатор должен быть положительнымю");

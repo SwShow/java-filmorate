@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.join;
 
 @Component
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserStorage.class);
     private Long id = 0L;
     protected final Map<Long, User> userRepository = new HashMap<>();
@@ -58,23 +58,23 @@ public class InMemoryUserStorage implements UserStorage{
     @Override
     public List<User> findCommonFriends(Long id, Long otherId) {
         Set<Long> usId = userRepository.get(id).getFriends();
-      Set<Long> usOtherId = userRepository.get(otherId).getFriends();
-      usId.retainAll(usOtherId);
-      List<User> users = new ArrayList<>();
-      for(Long i : usId) {
-          users.add(userRepository.get(i));
-      }
-      return users;
+        Set<Long> usOtherId = userRepository.get(otherId).getFriends();
+        usId.retainAll(usOtherId);
+        List<User> users = new ArrayList<>();
+        for (Long i : usId) {
+            users.add(userRepository.get(i));
+        }
+        return users;
     }
 
     @Override
     public void addFriend(Long userId, Long friendId) {
-    User user1 = userRepository.get(userId);
-    User user2 = userRepository.get(friendId);
-    user1.getFriends().add(friendId);
-    userRepository.put(userId, user1);
-    user2.getFriends().add(userId);
-    userRepository.put(friendId, user2);
+        User user1 = userRepository.get(userId);
+        User user2 = userRepository.get(friendId);
+        user1.getFriends().add(friendId);
+        userRepository.put(userId, user1);
+        user2.getFriends().add(userId);
+        userRepository.put(friendId, user2);
     }
 
     @Override
