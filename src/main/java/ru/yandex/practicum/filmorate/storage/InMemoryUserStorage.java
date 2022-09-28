@@ -61,9 +61,10 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> findCommonFriends(Long id, Long otherId) {
         Set<Long> usId = userStorage.get(id).getFriends();
         Set<Long> usOtherId = userStorage.get(otherId).getFriends();
-        usId.retainAll(usOtherId);
+        Set<Long> common = new HashSet<>(usId);
+        common.retainAll(usOtherId);
         List<User> users = new ArrayList<>();
-        for (Long i : usId) {
+        for (Long i : common) {
             users.add(userStorage.get(i));
         }
         return users;
@@ -77,7 +78,6 @@ public class InMemoryUserStorage implements UserStorage {
         user1.getFriends().add(friendId);
         user2.getFriends().add(userId);
         log.info("friends added:" + user1 + user2);
-
     }
 
     @Override
