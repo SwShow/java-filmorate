@@ -33,7 +33,6 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
     }
-
     public static int getQuanLikes(Film film) {
         return film.getLikes().size();
     }

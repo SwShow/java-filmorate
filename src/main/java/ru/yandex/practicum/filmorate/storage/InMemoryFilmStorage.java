@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,66 +14,62 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Long id = 0L;
-    protected final Map<Long, Film> filmRepository = new HashMap<>();
+    protected final Map<Long, Film> filmStorage = new HashMap<>();
 
     @Override
     public Film createFilm(Film film) {
         film.setId(++id);
-        filmRepository.put(id, film);
+        filmStorage.put(id, film);
         return film;
     }
 
     @Override
     public Film updateFilm(Film newFilm) {
-        filmRepository.put(newFilm.getId(), newFilm);
+        filmStorage.put(newFilm.getId(), newFilm);
         return newFilm;
     }
 
     @Override
     public Film findById(Long id) {
-        return filmRepository.get(id);
+        return filmStorage.get(id);
     }
 
     @Override
     public Collection<Film> findAllFilms() {
-        return filmRepository.values();
+        return filmStorage.values();
     }
 
     @Override
     public List<Film> findPopular(int count) {
-        int count1 = count;
-        if (count < filmRepository.size()) {
-            count1 = filmRepository.size();
+        if (count > filmStorage.size()) {
+            count = filmStorage.size();
         }
-        Collection<Film> films = filmRepository.values();
+        Collection<Film> films = filmStorage.values();
         return films.stream()
-                .sorted(Comparator.comparingInt(Film::getQuanLikes).reversed())
-                .limit(count1)
+                .sorted(Comparator.comparingInt(Film::getQuanLikes)
+                       .reversed())
+                .limit(count)
                 .collect(Collectors.toList());
-
-
     }
 
 
     @Override
     public Film addLike(Long filmId, Long userId) {
-        Film film = filmRepository.get(filmId);
+        Film film = filmStorage.get(filmId);
         film.getLikes().add(userId);
         log.info("лайк добавлен:" + film.getLikes());
-        filmRepository.replace(filmId, film);
         return film;
     }
 
     @Override
     public Film deleteLike(Long filmId, Long userId) {
-        Film film = filmRepository.get(filmId);
+        Film film = filmStorage.get(filmId);
         film.getLikes().remove(userId);
         log.info("лайк удален:" + film.getLikes());
-        filmRepository.replace(filmId, film);
         return film;
     }
 

@@ -51,7 +51,7 @@ public class FilmService {
     }
 
     public List<Film> findPopularFilms(Integer count) {
-        if (count == null || count == 0) {
+        if (count == null || count == 0 || count >10) {
             count = 10;
         }
         return filmStorage.findPopular(count);

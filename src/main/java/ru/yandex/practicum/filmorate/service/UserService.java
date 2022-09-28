@@ -56,7 +56,7 @@ public class UserService {
     }
 
     public List<User> getFriends(Long id) {
-        if (id < 0) {
+        if (id <= 0) {
             throw new NoSuchUserException("Идентификатор должен быть положительнымю");
         }
         return userStorage.findUserFriends(id);
