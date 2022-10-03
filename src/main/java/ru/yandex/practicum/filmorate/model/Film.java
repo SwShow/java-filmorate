@@ -9,11 +9,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Film {
 
-    private int id;
+    private Long id;
     @NotBlank
     private String name;
     @Size(min = 1, max = 200)
@@ -22,6 +24,7 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
+    private Set<Long> likes = new HashSet<>();
 
     public Film(String name, String description, LocalDate releaseDate, int duration) {
 
@@ -29,5 +32,8 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+    }
+    public static int getQuanLikes(Film film) {
+        return film.getLikes().size();
     }
 }

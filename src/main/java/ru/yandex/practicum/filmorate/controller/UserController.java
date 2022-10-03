@@ -1,67 +1,69 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
+import javax.validation.Valid;
 import java.util.*;
 
-
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private int id = 0;
-    protected final Map<Integer, User> userRepository = new HashMap<>();
-
+    private final UserService userService;
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@RequestBody @Valid User user) {
         log.info("получен запрос на создание пользователя");
-        validateFieldsUser(user);
-        user.setId(++id);
-        userRepository.put(id, user);
-        return user;
+        return userService.createUser(user);
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
+    public User updateUser(@RequestBody @Valid User user) {
         log.info("получен запрос на изменение данных пользователя");
-        validateFieldsUser(user);
-        int id = user.getId();
-        if (id < 0) {
-            throw new NoSuchUserException("Идентификатор должен быть положительнымю");
-        }
-        userRepository.replace(user.getId(), user);
-        return user;
+        return userService.updateUser(user);
     }
 
     @GetMapping
-    public List<User> getUsers() {
+    public Collection<User> getUsers() {
         log.info("получен запрос на получение данных пользователей");
-        return new ArrayList<>(userRepository.values());
+        return userService.getAllUsers();
     }
 
-    public void validateFieldsUser(User user) throws ValidationException {
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Введите корректный адрес.");
-        }
-        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new ValidationException("Введите корректный логин, не содержащий пробелы.");
-        }
-        if (user.getBirthday().isAfter(LocalDate.now()) || user.getBirthday() == null) {
-            throw new ValidationException("Введите корректную дату");
-        }
-        if (user.getName() == null || user.getName().equals("")) {
-            user.setName(user.getLogin());
-        }
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        log.info("получен запрос на получение данных пользователя");
+        return userService.getUserById(id);
     }
 
-    public void clearRepository() {
-        userRepository.clear();
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Запрос на добавление в друзья");
+        userService.addFriends(id, friendId);
     }
 
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Запрос на удаление из друзей");
+        userService.deleteFriends(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable Long id) {
+        log.info("Получен запрос списка друзей пользователя");
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        log.info("Получен запрос списка общих друзей пользователя 1 и пользователя 2");
+        return userService.getCommonFrs(id, otherId);
+    }
 }
