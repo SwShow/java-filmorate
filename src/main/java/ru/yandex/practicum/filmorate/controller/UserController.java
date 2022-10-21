@@ -19,15 +19,16 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+
     @PostMapping
     public User createUser(@RequestBody @Valid User user) {
-        log.info("получен запрос на создание пользователя");
+        log.info("получен запрос на создание пользователя" + user);
         return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {
-        log.info("получен запрос на изменение данных пользователя");
+        log.info("получен запрос на изменение данных пользователя" + user);
         return userService.updateUser(user);
     }
 
@@ -39,13 +40,13 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
-        log.info("получен запрос на получение данных пользователя");
+        log.info("получен запрос на получение данных пользователя" + id);
         return userService.getUserById(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        log.info("Запрос на добавление в друзья");
+        log.info("Запрос на добавление в друзья" + friendId);
         userService.addFriends(id, friendId);
     }
 
@@ -57,7 +58,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable Long id) {
-        log.info("Получен запрос списка друзей пользователя");
+        log.info("Получен запрос списка друзей пользователя" + id);
         return userService.getFriends(id);
     }
 

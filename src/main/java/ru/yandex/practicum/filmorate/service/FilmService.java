@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.NoSuchUserException;
-import ru.yandex.practicum.filmorate.controller.ValidationException;
+import ru.yandex.practicum.filmorate.Exception.NoSuchException;
+import ru.yandex.practicum.filmorate.Exception.NotFoundException;
+import ru.yandex.practicum.filmorate.Exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -15,20 +16,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
-
-    public Film findFilmById(Long filmId) {
+    public Optional<Film> findFilmById(Long filmId) {
         if (filmId < 0) {
-            throw new NoSuchUserException("Идентификатор должен быть положительнымю");
+            throw new NoSuchException("Идентификатор должен быть положительнымю");
         }
         return filmStorage.findById(filmId);
     }
@@ -41,7 +38,7 @@ public class FilmService {
     public Film updateFilm(Film film) {
         validateFieldsFilms(film);
         if (film.getId() < 0) {
-            throw new NoSuchUserException("Идентификатор должен быть положительнымю");
+            throw new NoSuchException("Идентификатор должен быть положительнымю");
         }
         return filmStorage.updateFilm(film);
     }
@@ -51,28 +48,35 @@ public class FilmService {
     }
 
     public List<Film> findPopularFilms(Integer count) {
-        if (count == null || count == 0 || count >10) {
+        if (count == null || count == 0 || count > 10) {
             count = 10;
         }
+        log.info("Поиск популярных фильмов, количество: " + count);
         return filmStorage.findPopular(count);
     }
 
-    public Film addLike(Long filmId, Long userId) {
+    public void addLike(Long filmId, Long userId) {
+        log.info("Пполучен запрос не добавление лайка фильму:" + filmId + "пользователем" + userId);
         if (filmId < 0 || userId < 0) {
-            throw new NoSuchUserException("Идентификатор должен быть положительнымю");
+            throw new NoSuchException("Идентификатор должен быть положительнымю");
         }
-        return filmStorage.addLike(filmId, userId);
+        if (filmStorage.findById(filmId).isEmpty() || userStorage.findById(userId).isEmpty()) {
+            throw new NotFoundException("По указанным id не найден фильм или пользователь");
+        }
+        filmStorage.addLike(filmId, userId);
     }
 
-    public Film removeLike(Long filmId, Long userId) {
+    public void removeLike(Long filmId, Long userId) {
         if (filmId < 0 || userId < 0) {
-            throw new NoSuchUserException("Идентификатор должен быть положительнымю");
+            throw new NotFoundException("not found");
         }
-        return filmStorage.deleteLike(filmId, userId);
+        if (filmStorage.findById(filmId).isEmpty() || userStorage.findById(userId).isEmpty()) {
+            throw new NotFoundException("По указанным id не найден фильм или пользователь");
+        }
+        filmStorage.deleteLike(filmId, userId);
     }
 
-
-    public void validateFieldsFilms(Film film) {
+    public void validateFieldsFilms(Film film) throws ValidationException {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException("Введите название фильма.");
         }
@@ -88,5 +92,10 @@ public class FilmService {
         if (film.getDuration() <= 0) {
             throw new ValidationException("продолжительность фильма должна быть положительной.");
         }
+        if (film.getMpa() == null) {
+            throw new ValidationException("Mpa фильма не должно равняться null.");
+        }
     }
+
+
 }

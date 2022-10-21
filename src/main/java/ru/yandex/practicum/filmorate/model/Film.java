@@ -1,39 +1,33 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
-import ru.yandex.practicum.filmorate.controller.ValidationException;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.TreeSet;
 
 @Data
 public class Film {
 
     private Long id;
-    @NotBlank
     private String name;
-    @Size(min = 1, max = 200)
     private String description;
-    @NotNull
     private LocalDate releaseDate;
-    @Min(1)
     private int duration;
-    private Set<Long> likes = new HashSet<>();
+    private int rate;
+    private TreeSet<Genre> genres;
+    private Mpa mpa;
 
-    public Film(String name, String description, LocalDate releaseDate, int duration) {
 
+    public Film(Long id, String name, String description, LocalDate releaseDate, int duration, int rate) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.rate = rate;
     }
-    public static int getQuanLikes(Film film) {
-        return film.getLikes().size();
-    }
+
 }
