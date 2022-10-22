@@ -16,7 +16,7 @@ public class User {
     private String name;
     private LocalDate birthday;
     private Set<Long> friends = new HashSet<>();
-    private Friend friend;
+
     public User(long id, String email, String name, String login, LocalDate birthday) {
         this.id = id;
         this.email = email;
